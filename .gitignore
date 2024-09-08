@@ -1,0 +1,11 @@
+# Исключить node_modules
+node_modules/
+
+# Исключить файлы окружения
+.env
+*.env
+
+# Docker артефакты
+*.log
+*.pid
+.docker/
