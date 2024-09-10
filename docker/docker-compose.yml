@@ -1,27 +1,27 @@
-version: '3'
-services:
-  api:
-    build:
-      context: ../api
-      dockerfile: Dockerfile.api
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=development
+version: '3.8'
 
+services:
   nginx:
     build:
-      context: ../nginx
-      dockerfile: Dockerfile.nginx
-    ports:
-      - "80:80"
-
-  mysql:
-    image: mysql:latest
-    ports:
-      - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: donutbar
+      context: ../  # Указывает на корневую папку проекта
+      dockerfile: docker/Dockerfile.nginx
     volumes:
-      - ./databases:/docker-entrypoint-initdb.d
+      - ../dist:/usr/share/nginx/html  # Монтируем папку dist
+      - ../docker/nginx.conf:/etc/nginx/nginx.conf  # Исправлен путь к конфигурации nginx
+    ports:
+      - "8080:80"  # Проброс порта
+
+  api:
+    build:
+      context: ../api  # Папка с Dockerfile.api
+      dockerfile: ../docker/Dockerfile.api  # Исправлен путь к Dockerfile.api
+    ports:
+      - "3000:3000"  # Проброс порта для API
+    depends_on: 
+      - nginx
+
+networks:
+  default:
+    external:
+      name: nginx_network  # Или любое другое имя сети, если требуется
+
