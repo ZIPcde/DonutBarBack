@@ -1,0 +1,14 @@
+# Используем официальный образ Nginx
+FROM nginx:alpine
+
+# Копируем конфигурацию Nginx
+COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# Копируем статические файлы из папки dist
+COPY ./docker/dist /usr/share/nginx/html
+
+# Открываем порт 80
+EXPOSE 80
+
+# Запуск Nginx
+CMD ["nginx", "-g", "daemon off;"]

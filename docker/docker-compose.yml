@@ -1,27 +1,55 @@
-version: '3'
+version: '3.8'
+
 services:
   api:
     build:
-      context: ../api
-      dockerfile: Dockerfile.api
+      context: ..
+      dockerfile: ./docker/Dockerfile.api
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
+    depends_on:
+      - mysql_orders
+      - mysql_products
 
   nginx:
     build:
-      context: ../nginx
-      dockerfile: Dockerfile.nginx
+      context: ..
+      dockerfile: ./docker/Dockerfile.nginx
     ports:
-      - "80:80"
+      - "8080:80"
+    depends_on:
+      - api
+    volumes:
+      - ../nginx/default.conf:/etc/nginx/conf.d/default.conf
 
-  mysql:
-    image: mysql:latest
+  mysql_orders:
+    image: mysql:8.0
+    container_name: mysql_orders
+    environment:
+      MYSQL_ROOT_PASSWORD: spore23
+      MYSQL_DATABASE: orders_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: spore23
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-orders-data:/var/lib/mysql
+
+  mysql_products:
+    image: mysql:8.0
+    container_name: mysql_products
+    environment:
+      MYSQL_ROOT_PASSWORD: spore23
+      MYSQL_DATABASE: products_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: spore23
     ports:
       - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: donutbar
     volumes:
-      - ./databases:/docker-entrypoint-initdb.d
+      - mysql-products-data:/var/lib/mysql
+
+volumes:
+  mysql-orders-data:
+  mysql-products-data:

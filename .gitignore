@@ -9,3 +9,9 @@ node_modules/
 *.log
 *.pid
 .docker/
+
+docker/databases/products_db/*
+!docker/databases/products_db/auto.cnf
+!docker/databases/products_db/binlog.index
+!docker/databases/products_db/ib_buffer_pool
+docker/databases/products_db/mysql.sock
