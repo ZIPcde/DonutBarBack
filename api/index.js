@@ -33,6 +33,50 @@ connection.query(createProductsTableQuery, (err, results) => {
   console.log('Products table created or already exists');
 });
 
+// Создание таблицы clients
+const createClientsTableQuery = `
+CREATE TABLE IF NOT EXISTS clients (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  name VARCHAR(255) NOT NULL,
+  phone VARCHAR(20) UNIQUE NOT NULL,
+  orders_ids TEXT,
+  notes TEXT
+);
+`;
+
+connection.query(createClientsTableQuery, (err, results) => {
+  if (err) {
+    console.error('Error creating clients table:', err);
+    return;
+  }
+  console.log('Clients table created or already exists');
+});
+
+// Создание таблицы orders
+const createOrdersTableQuery = `
+CREATE TABLE IF NOT EXISTS orders (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  customer_name VARCHAR(255) NOT NULL,
+  customer_phone VARCHAR(20) NOT NULL,
+  order_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  ready_time TIMESTAMP,
+  delivery_required BOOLEAN DEFAULT FALSE,
+  delivery_address TEXT,
+  products JSON NOT NULL,
+  total_amount DECIMAL(10, 2) NOT NULL,
+  table_number INT
+);
+`;
+
+connection.query(createOrdersTableQuery, (err, results) => {
+  if (err) {
+    console.error('Error creating orders table:', err);
+    return;
+  }
+  console.log('Orders table created or already exists');
+});
+
 // Запуск сервера
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

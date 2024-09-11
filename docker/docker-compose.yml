@@ -12,6 +12,7 @@ services:
     depends_on:
       - mysql_orders
       - mysql_products
+      - mysql_customers
 
   nginx:
     build:
@@ -50,6 +51,20 @@ services:
     volumes:
       - mysql-products-data:/var/lib/mysql
 
+  mysql_customers:
+    image: mysql:8.0
+    container_name: mysql_customers
+    environment:
+      MYSQL_ROOT_PASSWORD: spore23
+      MYSQL_DATABASE: customers_db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: spore23
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql-customers-data:/var/lib/mysql
+
 volumes:
   mysql-orders-data:
   mysql-products-data:
+  mysql-customers-data:
