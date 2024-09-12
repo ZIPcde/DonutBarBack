@@ -1,4 +1,4 @@
-# docker-compose.yml
+# docker\docker-compose.yml
 version: '3.8'
 
 services:
@@ -68,7 +68,7 @@ services:
 
   mysql_admins:  # Новая база данных для учетных записей администраторов
     build:
-      context: ..  # Убедитесь, что контекст указывает на правильный путь
+      context: ..  # Указываем контекст текущей папки, где находится Dockerfile.mysql и init-admins-db.sql
       dockerfile: ./docker/Dockerfile.mysql  # Используем кастомный Dockerfile для MySQL
     container_name: mysql_admins
     environment:

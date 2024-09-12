@@ -1,6 +1,6 @@
-// auth.js
+// api\src\middleware\auth.js
 const jwt = require('jsonwebtoken');
-const secret = 'your_secret_key'; // Замените на ваш секретный ключ
+const secret = 'your_secret_key'; // Временно используем простой ключ
 
 // Middleware для проверки токена
 function authenticateToken(req, res, next) {

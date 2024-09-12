@@ -1,4 +1,4 @@
-// server.js
+// api\src\config\server.js
 const express = require('express');
 const app = express();
 const router = require('../routes/routes');  // Подключаем маршруты

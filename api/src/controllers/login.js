@@ -1,15 +1,14 @@
-// login.js
+// api\src\controllers\login.js
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const secret = 'your_secret_key'; // Ваш секретный ключ
+const secret = 'your_secret_key'; // Временно используем простой ключ
 
 // Пример функции авторизации
 function login(req, res) {
   const { username, password } = req.body;
 
   // Проверка пользователя в базе данных
-  // Допустим, вы нашли пользователя с ролью в базе
-  const user = { id: 1, username, role: 'client' }; // роль может быть 'client' или 'staff'
+  const user = { id: 1, username, role: 'client', passwordHash: '$2a$10$...' }; // Замените на реальную проверку
 
   // Сравниваем хеш пароля
   bcrypt.compare(password, user.passwordHash, (err, result) => {

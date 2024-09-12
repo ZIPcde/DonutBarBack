@@ -2,5 +2,5 @@
 
 FROM mysql:8.0
 
-# Копируем файл с инициализацией в директорию для инициализационных скриптов
-COPY init-admins-db.sql /docker-entrypoint-initdb.d/
+# Копируем файл инициализации в образ
+COPY docker/init-admins-db.sql /docker-entrypoint-initdb.d/

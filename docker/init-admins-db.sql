@@ -1,3 +1,4 @@
+-- docker\init-admins-db.sql 
 -- Создание таблицы пользователей
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
