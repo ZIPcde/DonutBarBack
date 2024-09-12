@@ -67,7 +67,9 @@ services:
       - mysql-customers-data:/var/lib/mysql
 
   mysql_admins:  # Новая база данных для учетных записей администраторов
-    image: mysql:8.0
+    build:
+      context: ..  # Убедитесь, что контекст указывает на правильный путь
+      dockerfile: ./docker/Dockerfile.mysql  # Используем кастомный Dockerfile для MySQL
     container_name: mysql_admins
     environment:
       MYSQL_ROOT_PASSWORD: spore23
