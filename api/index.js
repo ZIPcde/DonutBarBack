@@ -1,5 +1,7 @@
+// api/index.js
+
 const express = require('express');
-const connection = require('./db');
+const connection = require('./db'); // Убедитесь, что подключение настроено правильно
 const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 3000;
