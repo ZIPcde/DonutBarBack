@@ -1,18 +1,13 @@
-const mysql = require('mysql2');
-
+// db_orders.js
+const mysql = require('mysql')
 const connection = mysql.createConnection({
-    host: process.env.MYSQL_HOST, // имя сервиса mysql_orders в docker-compose
-  user: 'user', // имя пользователя, указанное в docker-compose.yml
-  password: 'user_password', // пароль пользователя
-  database: 'orders_db' // база данных для заказов
-});
+  host: process.env.MYSQL_ORDERS_HOST,
+  user: process.env.MYSQL_ORDERS_USER,
+  password: process.env.MYSQL_ORDERS_PASSWORD,
+  database: process.env.MYSQL_ORDERS_DATABASE,
+})
 
-connection.connect(err => {
-  if (err) {
-    console.error('Error connecting to MySQL orders:', err);
-    return;
-  }
-  console.log('Connected to MySQL orders');
-});
-
-module.exports = connection;
+connection.connect((err) => {
+  if (err) throw err
+  console.log(`Connected to ${process.env.MYSQL_ORDERS_DATABASE}`)
+})

@@ -1,18 +1,13 @@
-const mysql = require('mysql2');
-
+// db_customers.js
+const mysql = require('mysql')
 const connection = mysql.createConnection({
-    host: process.env.MYSQL_HOST, // имя сервиса mysql_customers в docker-compose
-  user: 'user', // имя пользователя, указанный в docker-compose.yml
-  password: 'user_password', // пароль пользователя
-  database: 'customers_db' // база данных для клиентов
-});
+  host: process.env.MYSQL_CUSTOMERS_HOST,
+  user: process.env.MYSQL_CUSTOMERS_USER,
+  password: process.env.MYSQL_CUSTOMERS_PASSWORD,
+  database: process.env.MYSQL_CUSTOMERS_DATABASE,
+})
 
-connection.connect(err => {
-  if (err) {
-    console.error('Error connecting to MySQL customers:', err);
-    return;
-  }
-  console.log('Connected to MySQL customers');
-});
-
-module.exports = connection;
+connection.connect((err) => {
+  if (err) throw err
+  console.log(`Connected to ${process.env.MYSQL_CUSTOMERS_DATABASE}`)
+})

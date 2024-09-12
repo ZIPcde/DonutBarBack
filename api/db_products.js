@@ -1,18 +1,13 @@
-const mysql = require('mysql2');
-
+// db_products.js
+const mysql = require('mysql')
 const connection = mysql.createConnection({
-    host: process.env.MYSQL_HOST, // имя сервиса mysql_products в docker-compose
-  user: 'user', // имя пользователя, указанное в docker-compose.yml
-  password: 'user_password', // пароль пользователя
-  database: 'products_db' // база данных для товаров
-});
+  host: process.env.MYSQL_PRODUCTS_HOST,
+  user: process.env.MYSQL_PRODUCTS_USER,
+  password: process.env.MYSQL_PRODUCTS_PASSWORD,
+  database: process.env.MYSQL_PRODUCTS_DATABASE,
+})
 
-connection.connect(err => {
-  if (err) {
-    console.error('Error connecting to MySQL products:', err);
-    return;
-  }
-  console.log('Connected to MySQL products');
-});
-
-module.exports = connection;
+connection.connect((err) => {
+  if (err) throw err
+  console.log(`Connected to ${process.env.MYSQL_PRODUCTS_DATABASE}`)
+})

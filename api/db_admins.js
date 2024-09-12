@@ -1,18 +1,13 @@
-const mysql = require('mysql2');
-
+// db_admins.js
+const mysql = require('mysql')
 const connection = mysql.createConnection({
-  host: process.env.MYSQL_HOST, // имя сервиса mysql_admins в docker-compose
-  user: 'user', // имя пользователя, указанный в docker-compose.yml
-  password: 'user_password', // пароль пользователя
-  database: 'admins_db' // база данных для администраторов
-});
+  host: process.env.MYSQL_ADMINS_HOST,
+  user: process.env.MYSQL_ADMINS_USER,
+  password: process.env.MYSQL_ADMINS_PASSWORD,
+  database: process.env.MYSQL_ADMINS_DATABASE,
+})
 
-connection.connect(err => {
-  if (err) {
-    console.error('Error connecting to MySQL admins:', err);
-    return;
-  }
-  console.log('Connected to MySQL admins');
-});
-
-module.exports = connection;
+connection.connect((err) => {
+  if (err) throw err
+  console.log(`Connected to ${process.env.MYSQL_ADMINS_DATABASE}`)
+})
