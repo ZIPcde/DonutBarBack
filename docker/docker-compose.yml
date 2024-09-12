@@ -1,9 +1,10 @@
+# docker-compose.yml
 version: '3.8'
 
 services:
   api:
     build:
-      context: ..
+      context: ..  # Убедитесь, что контекст указывает на правильный путь
       dockerfile: ./docker/Dockerfile.api
     ports:
       - "3000:3000"
@@ -13,10 +14,11 @@ services:
       - mysql_orders
       - mysql_products
       - mysql_customers
+      - mysql_admins  # Добавляем зависимость от новой базы данных
 
   nginx:
     build:
-      context: ..
+      context: ..  # Убедитесь, что контекст указывает на правильный путь
       dockerfile: ./docker/Dockerfile.nginx
     ports:
       - "8080:80"
@@ -64,7 +66,21 @@ services:
     volumes:
       - mysql-customers-data:/var/lib/mysql
 
+  mysql_admins:  # Новая база данных для учетных записей администраторов
+    image: mysql:8.0
+    container_name: mysql_admins
+    environment:
+      MYSQL_ROOT_PASSWORD: spore23
+      MYSQL_DATABASE: admins_db  # Название базы данных
+      MYSQL_USER: user
+      MYSQL_PASSWORD: spore23
+    ports:
+      - "3309:3306"  # Используем другой порт, чтобы избежать конфликта
+    volumes:
+      - mysql-admins-data:/var/lib/mysql  # Добавляем volume для хранения данных
+
 volumes:
   mysql-orders-data:
   mysql-products-data:
   mysql-customers-data:
+  mysql-admins-data:  # Volume для базы данных администраторов

@@ -1,6 +1,6 @@
-// index.js
 const express = require('express');
 const connection = require('./db');
+const bcrypt = require('bcryptjs');
 const app = express();
 const PORT = 3000;
 
@@ -75,6 +75,42 @@ connection.query(createOrdersTableQuery, (err, results) => {
     return;
   }
   console.log('Orders table created or already exists');
+});
+
+// Создание таблицы users для хранения учетных записей персонала
+const createUsersTableQuery = `
+CREATE TABLE IF NOT EXISTS users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  role ENUM('admin', 'staff') NOT NULL
+);
+`;
+
+connection.query(createUsersTableQuery, (err, results) => {
+  if (err) {
+    console.error('Error creating users table:', err);
+    return;
+  }
+  console.log('Users table created or already exists');
+
+  // Добавление начальных данных (администратор и сотрудники)
+  const adminPassword = bcrypt.hashSync('adminpassword', 10); // Хеширование пароля администратора
+  const staffPassword = bcrypt.hashSync('staffpassword', 10); // Хеширование пароля сотрудника
+
+  const insertUsersQuery = `
+    INSERT IGNORE INTO users (username, password, role) VALUES
+    ('admin', '${adminPassword}', 'admin'),
+    ('staff', '${staffPassword}', 'staff');
+  `;
+
+  connection.query(insertUsersQuery, (err, results) => {
+    if (err) {
+      console.error('Error inserting default users:', err);
+      return;
+    }
+    console.log('Default users inserted or already exist');
+  });
 });
 
 // Запуск сервера
