@@ -1,7 +1,7 @@
 const mysql = require('mysql2');
 
 const connection = mysql.createConnection({
-  host: 'mysql_customers', // имя сервиса mysql_customers в docker-compose
+    host: process.env.MYSQL_HOST, // имя сервиса mysql_customers в docker-compose
   user: 'user', // имя пользователя, указанный в docker-compose.yml
   password: 'user_password', // пароль пользователя
   database: 'customers_db' // база данных для клиентов
