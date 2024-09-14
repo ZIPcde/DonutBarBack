@@ -10,4 +10,4 @@ CREATE TABLE IF NOT EXISTS users (
 -- Вставка начальных данных
 -- Замените значение @admin_password на хешированный пароль для администраторов
 INSERT IGNORE INTO users (username, password, role) VALUES
-('admin', '$2a$10$XfR/PZg0Tgu1RcqfPY2cPOwl08HYcbfESuXsVfJ.kRsiIw81vqXry', 'admin');
+('admin', '$2a$12$MhHggqp0pCzZrzI9spnKsOrOAzJLaXjAWRmLsyHpMx/iF.SSU8bXS', 'admin');

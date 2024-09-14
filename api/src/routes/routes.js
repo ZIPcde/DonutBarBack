@@ -8,28 +8,28 @@ const mysql = require('mysql2');
 
 // Настройка соединений с базами данных
 const dbOrders = mysql.createConnection({
-  host: process.env.MYSQL_ORDERS_HOST,
+  host: process.env.MYSQL_ORDERS_HOST  || 'mysql_orders',
   user: process.env.MYSQL_ORDERS_USER,
   password: process.env.MYSQL_ORDERS_PASSWORD,
   database: process.env.MYSQL_ORDERS_DATABASE
 });
 
 const dbProducts = mysql.createConnection({
-  host: process.env.MYSQL_PRODUCTS_HOST,
+  host: process.env.MYSQL_PRODUCTS_HOST  || 'mysql_products',
   user: process.env.MYSQL_PRODUCTS_USER,
   password: process.env.MYSQL_PRODUCTS_PASSWORD,
   database: process.env.MYSQL_PRODUCTS_DATABASE
 });
 
 const dbCustomers = mysql.createConnection({
-  host: process.env.MYSQL_CUSTOMERS_HOST,
+  host: process.env.MYSQL_CUSTOMERS_HOST  || 'mysql_customers',
   user: process.env.MYSQL_CUSTOMERS_USER,
   password: process.env.MYSQL_CUSTOMERS_PASSWORD,
   database: process.env.MYSQL_CUSTOMERS_DATABASE
 });
 
 const dbAdmins = mysql.createConnection({
-  host: process.env.MYSQL_ADMINS_HOST,
+  host: process.env.MYSQL_ADMINS_HOST || 'mysql_admins',
   user: process.env.MYSQL_ADMINS_USER,
   password: process.env.MYSQL_ADMINS_PASSWORD,
   database: process.env.MYSQL_ADMINS_DATABASE

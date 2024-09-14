@@ -9,11 +9,28 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
+      - MYSQL_ADMINS_HOST=mysql_admins
+      - MYSQL_ADMINS_USER=user
+      - MYSQL_ADMINS_PASSWORD=spore23
+      - MYSQL_ADMINS_DATABASE=admins_db
+      - MYSQL_ORDERS_HOST=mysql_orders
+      - MYSQL_ORDERS_USER=user
+      - MYSQL_ORDERS_PASSWORD=spore23
+      - MYSQL_ORDERS_DATABASE=orders_db
+      - MYSQL_PRODUCTS_HOST=mysql_products
+      - MYSQL_PRODUCTS_USER=user
+      - MYSQL_PRODUCTS_PASSWORD=spore23
+      - MYSQL_PRODUCTS_DATABASE=products_db
+      - MYSQL_CUSTOMERS_HOST=mysql_customers
+      - MYSQL_CUSTOMERS_USER=user
+      - MYSQL_CUSTOMERS_PASSWORD=spore23
+      - MYSQL_CUSTOMERS_DATABASE=customers_db
     depends_on:
       - mysql_orders
       - mysql_products
       - mysql_customers
       - mysql_admins  # Добавляем зависимость от новой базы данных
+    entrypoint: ["/bin/sh", "-c", "sleep 10 && node index.js"]  # Добавляем задержку перед запуском
 
   nginx:
     build:
@@ -48,7 +65,7 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: spore23
     ports:
-      - "3306:3306"
+      - "3305:3306"
     volumes:
       - mysql-products-data:/var/lib/mysql
 
