@@ -1,35 +1,38 @@
 // api\src\routes\routes.js
+
+
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const mysql = require('mysql2');
 
 // Настройка соединений с базами данных
 const dbOrders = mysql.createConnection({
-  host: 'mysql_orders',
-  user: 'user',
-  password: 'spore23',
-  database: 'orders_db'
+  host: process.env.MYSQL_ORDERS_HOST,
+  user: process.env.MYSQL_ORDERS_USER,
+  password: process.env.MYSQL_ORDERS_PASSWORD,
+  database: process.env.MYSQL_ORDERS_DATABASE
 });
 
 const dbProducts = mysql.createConnection({
-  host: 'mysql_products',
-  user: 'user',
-  password: 'spore23',
-  database: 'products_db'
+  host: process.env.MYSQL_PRODUCTS_HOST,
+  user: process.env.MYSQL_PRODUCTS_USER,
+  password: process.env.MYSQL_PRODUCTS_PASSWORD,
+  database: process.env.MYSQL_PRODUCTS_DATABASE
 });
 
 const dbCustomers = mysql.createConnection({
-  host: 'mysql_customers',
-  user: 'user',
-  password: 'spore23',
-  database: 'customers_db'
+  host: process.env.MYSQL_CUSTOMERS_HOST,
+  user: process.env.MYSQL_CUSTOMERS_USER,
+  password: process.env.MYSQL_CUSTOMERS_PASSWORD,
+  database: process.env.MYSQL_CUSTOMERS_DATABASE
 });
 
 const dbAdmins = mysql.createConnection({
-  host: 'mysql_admins',
-  user: 'user',
-  password: 'spore23',
-  database: 'admins_db'
+  host: process.env.MYSQL_ADMINS_HOST,
+  user: process.env.MYSQL_ADMINS_USER,
+  password: process.env.MYSQL_ADMINS_PASSWORD,
+  database: process.env.MYSQL_ADMINS_DATABASE
 });
 
 const { authenticateToken, authorizeRole } = require('../middleware/auth');

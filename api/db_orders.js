@@ -1,7 +1,7 @@
 // db_orders.js
 const mysql = require('mysql')
 const connection = mysql.createConnection({
-  host: process.env.MYSQL_ORDERS_HOST,
+  host: process.env.MYSQL_ORDERS_HOST || 'mysql_orders',
   user: process.env.MYSQL_ORDERS_USER,
   password: process.env.MYSQL_ORDERS_PASSWORD,
   database: process.env.MYSQL_ORDERS_DATABASE,

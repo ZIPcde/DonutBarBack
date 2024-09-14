@@ -1,7 +1,7 @@
 // db_customers.js
 const mysql = require('mysql')
 const connection = mysql.createConnection({
-  host: process.env.MYSQL_CUSTOMERS_HOST,
+  host: process.env.MYSQL_CUSTOMERS_HOST || 'mysql_customers',
   user: process.env.MYSQL_CUSTOMERS_USER,
   password: process.env.MYSQL_CUSTOMERS_PASSWORD,
   database: process.env.MYSQL_CUSTOMERS_DATABASE,
