@@ -30,7 +30,7 @@ services:
       - mysql_products
       - mysql_customers
       - mysql_admins  # Добавляем зависимость от новой базы данных
-    entrypoint: ["/bin/sh", "-c", "sleep 10 && node index.js"]  # Добавляем задержку перед запуском
+    entrypoint: ["/bin/sh", "-c", "sleep 60 && node index.js"]  # Добавляем задержку перед запуском
 
   nginx:
     build:
