@@ -52,6 +52,18 @@ router.get('/products', (req, res) => {
   });
 });
 
+router.post('/products', authenticateToken, authorizeRole('staff'), (req, res) => {
+  const { productDetails } = req.body;
+  const query = 'INSERT INTO products SET ?';
+  dbProducts.query(query, productDetails, (err, results) => {
+    if (err) {
+      console.error('Error adding product:', err);
+      return res.status(500).json({ error: 'Error adding product' });
+    }
+    res.json({ message: 'Product added', productId: results.insertId });
+  });
+});
+
 // Маршрут для создания заказа (доступно только клиентам)
 router.post('/orders', authenticateToken, authorizeRole('client'), (req, res) => {
   const { orderDetails } = req.body;
