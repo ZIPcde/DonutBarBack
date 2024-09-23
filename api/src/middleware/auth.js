@@ -25,9 +25,13 @@ function authenticateToken(req, res, next) {
 }
 
 // Middleware для проверки ролей
-function authorizeRole(role) {
+function authorizeRole(roles) {
   return (req, res, next) => {
-    if (req.user.role !== role) {
+    if (!Array.isArray(roles)) {
+      roles = [roles]; // Преобразуем в массив, если передана одна роль
+    }
+
+    if (!roles.includes(req.user.role)) {
       console.warn('Недостаточно прав:', req.user.role);
       return res.sendStatus(403); // Доступ запрещен
     }

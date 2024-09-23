@@ -17,9 +17,9 @@ const db = mysql.createConnection({
 // Пример функции авторизации
 function login(req, res) {
   const { username, password } = req.body;
-
+  //console.log('Тело запроса:', req.body);
   // Логируем запрос для отладки
-  console.log('Запрос на логин:', username, password);
+  // console.log('Запрос на логин:', username, password);
   // Проверка пользователя в базе данных
   const query = 'SELECT * FROM users WHERE username = ?'; // Предполагаем, что есть таблица users
   db.query(query, [username], (err, results) => {

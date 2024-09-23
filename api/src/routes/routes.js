@@ -52,7 +52,7 @@ router.get('/products', (req, res) => {
   });
 });
 
-router.post('/products', authenticateToken, authorizeRole('staff'), (req, res) => {
+router.post('/products', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
   const { productDetails } = req.body;
   const query = 'INSERT INTO products SET ?';
   dbProducts.query(query, productDetails, (err, results) => {
@@ -78,7 +78,7 @@ router.post('/orders', authenticateToken, authorizeRole('client'), (req, res) =>
 });
 
 // Маршрут для сотрудников — полный доступ к заказам (доступно только персоналу)
-router.get('/orders', authenticateToken, authorizeRole('staff'), (req, res) => {
+router.get('/orders', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
   const query = 'SELECT * FROM orders';
   dbOrders.query(query, (err, results) => {
     if (err) {
@@ -90,7 +90,7 @@ router.get('/orders', authenticateToken, authorizeRole('staff'), (req, res) => {
 });
 
 // Маршрут для работы с клиентами (доступно только персоналу)
-router.get('/customers', authenticateToken, authorizeRole('staff'), (req, res) => {
+router.get('/customers', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
   const query = 'SELECT * FROM customers';
   dbCustomers.query(query, (err, results) => {
     if (err) {
