@@ -1,4 +1,4 @@
-// api/index.js
+// api/index.js 
 
 require('dotenv').config();
 const express = require('express');
@@ -16,7 +16,7 @@ app.use(express.json());
 // Настройка CORS
 app.use(cors({
   origin: 'http://localhost:8080',
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Добавлены PUT и DELETE
   credentials: true
 }));
 
