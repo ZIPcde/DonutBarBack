@@ -64,6 +64,31 @@ router.post('/products', authenticateToken, authorizeRole(['staff', 'admin']), (
   });
 });
 
+router.put('/products/:id', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
+  const { id } = req.params;
+  const updatedProduct = req.body; // Получаем обновленные данные
+  const query = 'UPDATE products SET ? WHERE id = ?';
+  dbProducts.query(query, [updatedProduct, id], (err, results) => {
+    if (err) {
+      console.error('Error updating product:', err);
+      return res.status(500).json({ error: 'Error updating product' });
+    }
+    res.json({ message: 'Product updated' });
+  });
+});
+
+router.delete('/products/:id', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
+  const { id } = req.params;
+  const query = 'DELETE FROM products WHERE id = ?';
+  dbProducts.query(query, id, (err, results) => {
+    if (err) {
+      console.error('Error deleting product:', err);
+      return res.status(500).json({ error: 'Error deleting product' });
+    }
+    res.json({ message: 'Product deleted' });
+  });
+});
+
 // Маршрут для создания заказа (доступно только клиентам)
 router.post('/orders', authenticateToken, authorizeRole('client'), (req, res) => {
   const { orderDetails } = req.body;
