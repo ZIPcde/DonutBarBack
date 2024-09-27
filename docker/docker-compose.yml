@@ -70,6 +70,7 @@ services:
       - "3305:3306"
     volumes:
       - mysql-products-data:/var/lib/mysql
+      - ./docker/init-products-db.sql:/docker-entrypoint-initdb.d/init-products-db.sql
 
   mysql_customers:
     image: mysql:8.0

@@ -1,5 +1,7 @@
 -- docker\init-admins-db.sql 
 -- Создание таблицы пользователей
+USE admins_db;
+
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(50) UNIQUE NOT NULL,
@@ -7,7 +9,5 @@ CREATE TABLE IF NOT EXISTS users (
   role ENUM('admin', 'staff') NOT NULL
 );
 
--- Вставка начальных данных
--- Замените значение @admin_password на хешированный пароль для администраторов
 INSERT IGNORE INTO users (username, password, role) VALUES
 ('admin', '$2a$12$MhHggqp0pCzZrzI9spnKsOrOAzJLaXjAWRmLsyHpMx/iF.SSU8bXS', 'admin');
