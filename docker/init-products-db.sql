@@ -1,3 +1,5 @@
+USE products_db;
+
 -- Создание таблицы products
 CREATE TABLE IF NOT EXISTS products (
   id INT AUTO_INCREMENT PRIMARY KEY,
