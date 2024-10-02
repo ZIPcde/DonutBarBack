@@ -1,4 +1,4 @@
--- docker\init-admins-db.sql 
+-- DonutBarBack\docker\init-admins-db.sql
 -- Создание таблицы пользователей
 USE admins_db;
 

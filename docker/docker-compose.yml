@@ -99,7 +99,7 @@ services:
       - "3309:3306"  # Используем другой порт, чтобы избежать конфликта
     volumes:
       - mysql-admins-data:/var/lib/mysql  # Добавляем volume для хранения данных
-      - ./docker/init-admins-db.sql:/docker-entrypoint-initdb.d/init-admins-db.sql  # SQL скрипт для admins_db
+      - ./init-admins-db.sql:/docker-entrypoint-initdb.d/init-admins-db.sql  # SQL скрипт для admins_db
 
 volumes:
   mysql-orders-data:
