@@ -114,6 +114,75 @@ router.get('/orders', authenticateToken, authorizeRole(['staff', 'admin']), (req
   });
 });
 
+router.post('/orders', authenticateToken, authorizeRole(['admin', 'staff']), (req, res) => {
+  const { orderDetails } = req.body;
+  const query = 'INSERT INTO orders SET ?';
+  dbOrders.query(query, orderDetails, (err, results) => {
+    if (err) {
+      console.error('Error creating order:', err);
+      return res.status(500).json({ error: 'Error creating order' });
+    }
+    res.json({ message: 'Order added', orderId: results.insertId });
+  });
+});
+
+router.put('/orders/:id', authenticateToken, authorizeRole(['admin', 'staff']), (req, res) => {
+  const { id } = req.params;
+  const updatedOrder = req.body;
+  const query = 'UPDATE orders SET ? WHERE id = ?';
+  dbOrders.query(query, [updatedOrder, id], (err, results) => {
+    if (err) {
+      console.error('Error updating order:', err);
+      return res.status(500).json({ error: 'Error updating order' });
+    }
+    res.json({ message: 'Order updated' });
+  });
+});
+
+router.delete('/orders/:id', authenticateToken, authorizeRole(['admin', 'staff']), (req, res) => {
+  const { id } = req.params;
+  const query = 'DELETE FROM orders WHERE id = ?';
+  dbOrders.query(query, id, (err, results) => {
+    if (err) {
+      console.error('Error deleting order:', err);
+      return res.status(500).json({ error: 'Error deleting order' });
+    }
+    res.json({ message: 'Order deleted' });
+  });
+});
+
+
+// пр-ка на наличие номера телефона в базе и создание нового клиента при отсутствии совпаденй
+router.post('/customers', authenticateToken, authorizeRole(['admin', 'staff']), (req, res) => {
+  const { name, phone } = req.body;
+
+  // Проверяем, существует ли уже клиент с таким номером телефона
+  const checkQuery = 'SELECT * FROM customers WHERE phone = ?';
+  dbCustomers.query(checkQuery, [phone], (err, results) => {
+    if (err) {
+      console.error('Error checking customer:', err);
+      return res.status(500).json({ error: 'Error checking customer' });
+    }
+
+    // Если клиент уже существует
+    if (results.length > 0) {
+      return res.status(400).json({ error: 'Customer with this phone number already exists' });
+    }
+
+    // Если клиента с таким номером телефона нет, добавляем нового клиента
+    const addQuery = 'INSERT INTO customers SET ?';
+    const customerDetails = { name, phone, created_at: new Date() }; // Добавляем время создания учетной записи
+
+    dbCustomers.query(addQuery, customerDetails, (err, results) => {
+      if (err) {
+        console.error('Error adding customer:', err);
+        return res.status(500).json({ error: 'Error adding customer' });
+      }
+      res.json({ message: 'Customer added', customerId: results.insertId });
+    });
+  });
+});
+
 // Маршрут для работы с клиентами (доступно только персоналу)
 router.get('/customers', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
   const query = 'SELECT * FROM customers';
@@ -123,6 +192,44 @@ router.get('/customers', authenticateToken, authorizeRole(['staff', 'admin']), (
       return res.status(500).json({ error: 'Error fetching customers' });
     }
     res.json(results);
+  });
+});
+
+// Маршруты для работы с клиентами (доступно для администраторов и сотрудников)
+router.post('/customers', authenticateToken, authorizeRole(['admin', 'staff']), (req, res) => {
+  const { customerDetails } = req.body;
+  const query = 'INSERT INTO customers SET ?';
+  dbCustomers.query(query, customerDetails, (err, results) => {
+    if (err) {
+      console.error('Error creating customer:', err);
+      return res.status(500).json({ error: 'Error creating customer' });
+    }
+    res.json({ message: 'Customer added', customerId: results.insertId });
+  });
+});
+
+router.put('/customers/:id', authenticateToken, authorizeRole(['admin', 'staff']), (req, res) => {
+  const { id } = req.params;
+  const updatedCustomer = req.body;
+  const query = 'UPDATE customers SET ? WHERE id = ?';
+  dbCustomers.query(query, [updatedCustomer, id], (err, results) => {
+    if (err) {
+      console.error('Error updating customer:', err);
+      return res.status(500).json({ error: 'Error updating customer' });
+    }
+    res.json({ message: 'Customer updated' });
+  });
+});
+
+router.delete('/customers/:id', authenticateToken, authorizeRole(['admin', 'staff']), (req, res) => {
+  const { id } = req.params;
+  const query = 'DELETE FROM customers WHERE id = ?';
+  dbCustomers.query(query, id, (err, results) => {
+    if (err) {
+      console.error('Error deleting customer:', err);
+      return res.status(500).json({ error: 'Error deleting customer' });
+    }
+    res.json({ message: 'Customer deleted' });
   });
 });
 

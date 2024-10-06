@@ -55,7 +55,7 @@ services:
       - "3307:3306"
     volumes:
       - mysql-orders-data:/var/lib/mysql
-      - ./docker/init-orders-db.sql:/docker-entrypoint-initdb.d/init-orders-db.sql  # SQL скрипт для orders_db
+      - ./init-orders-db.sql:/docker-entrypoint-initdb.d/init-orders-db.sql  # SQL скрипт для orders_db
 
   mysql_products:
     image: mysql:8.0
@@ -69,7 +69,7 @@ services:
       - "3305:3306"
     volumes:
       - mysql-products-data:/var/lib/mysql
-      - ./docker/init-products-db.sql:/docker-entrypoint-initdb.d/init-products-db.sql
+      - ./init-products-db.sql:/docker-entrypoint-initdb.d/init-products-db.sql
 
   mysql_customers:
     image: mysql:8.0
@@ -83,7 +83,7 @@ services:
       - "3308:3306"
     volumes:
       - mysql-customers-data:/var/lib/mysql
-      - ./docker/init-customers-db.sql:/docker-entrypoint-initdb.d/init-customers-db.sql  # SQL скрипт для customers_db
+      - ./init-customers-db.sql:/docker-entrypoint-initdb.d/init-customers-db.sql  # SQL скрипт для customers_db
 
   mysql_admins:  # Новая база данных для учетных записей администраторов
     build:
