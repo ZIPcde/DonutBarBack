@@ -8,21 +8,21 @@ const mysql = require('mysql2');
 
 // Настройка соединений с базами данных
 const dbOrders = mysql.createConnection({
-  host: process.env.MYSQL_ORDERS_HOST  || 'mysql_orders',
+  host: process.env.MYSQL_ORDERS_HOST || 'mysql_orders',
   user: process.env.MYSQL_ORDERS_USER,
   password: process.env.MYSQL_ORDERS_PASSWORD,
   database: process.env.MYSQL_ORDERS_DATABASE
 });
 
 const dbProducts = mysql.createConnection({
-  host: process.env.MYSQL_PRODUCTS_HOST  || 'mysql_products',
+  host: process.env.MYSQL_PRODUCTS_HOST || 'mysql_products',
   user: process.env.MYSQL_PRODUCTS_USER,
   password: process.env.MYSQL_PRODUCTS_PASSWORD,
   database: process.env.MYSQL_PRODUCTS_DATABASE
 });
 
 const dbCustomers = mysql.createConnection({
-  host: process.env.MYSQL_CUSTOMERS_HOST  || 'mysql_customers',
+  host: process.env.MYSQL_CUSTOMERS_HOST || 'mysql_customers',
   user: process.env.MYSQL_CUSTOMERS_USER,
   password: process.env.MYSQL_CUSTOMERS_PASSWORD,
   database: process.env.MYSQL_CUSTOMERS_DATABASE
@@ -89,8 +89,8 @@ router.delete('/products/:id', authenticateToken, authorizeRole(['staff', 'admin
   });
 });
 
-// Маршрут для создания заказа (доступно только клиентам)
-router.post('/orders', authenticateToken, authorizeRole('client'), (req, res) => {
+// Маршрут для создания заказа (не требует проверки токена и роли)
+router.post('/orders', (req, res) => {
   const { orderDetails } = req.body;
   const query = 'INSERT INTO orders SET ?';
   dbOrders.query(query, orderDetails, (err, results) => {
@@ -102,7 +102,7 @@ router.post('/orders', authenticateToken, authorizeRole('client'), (req, res) =>
   });
 });
 
-// Маршрут для сотрудников — полный доступ к заказам (доступно только персоналу)
+// Маршрут для получения списка заказов (только для ролей admin и staff)
 router.get('/orders', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
   const query = 'SELECT * FROM orders';
   dbOrders.query(query, (err, results) => {
@@ -111,6 +111,33 @@ router.get('/orders', authenticateToken, authorizeRole(['staff', 'admin']), (req
       return res.status(500).json({ error: 'Error fetching orders' });
     }
     res.json(results);
+  });
+});
+
+// Маршрут для обновления заказа (только для ролей admin и staff)
+router.put('/orders/:id', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
+  const { id } = req.params;
+  const updatedOrder = req.body;
+  const query = 'UPDATE orders SET ? WHERE id = ?';
+  dbOrders.query(query, [updatedOrder, id], (err, results) => {
+    if (err) {
+      console.error('Error updating order:', err);
+      return res.status(500).json({ error: 'Error updating order' });
+    }
+    res.json({ message: 'Order updated' });
+  });
+});
+
+// Маршрут для удаления заказа (только для ролей admin и staff)
+router.delete('/orders/:id', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
+  const { id } = req.params;
+  const query = 'DELETE FROM orders WHERE id = ?';
+  dbOrders.query(query, id, (err, results) => {
+    if (err) {
+      console.error('Error deleting order:', err);
+      return res.status(500).json({ error: 'Error deleting order' });
+    }
+    res.json({ message: 'Order deleted' });
   });
 });
 
