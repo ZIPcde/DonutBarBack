@@ -1,5 +1,4 @@
-// api\src\routes\routes.js
-
+// api/src/routes/routes.js
 
 require('dotenv').config();
 const express = require('express');
@@ -37,15 +36,10 @@ const dbAdmins = mysql.createConnection({
 
 const { authenticateToken, authorizeRole } = require('../middleware/auth');
 
-const formatDateTime = (dateString) => {
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+// Функция для форматирования datetime
+const formatDateTime = (isoString) => {
+  // Преобразуем ISO-строку в формат 'YYYY-MM-DD HH:MM:SS'
+  return isoString.replace('T', ' ').substring(0, 19);
 };
 
 // Маршрут для логина (доступно всем)
@@ -63,6 +57,7 @@ router.get('/products', (req, res) => {
   });
 });
 
+// Добавление продукта (доступно для staff и admin)
 router.post('/products', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
   const { productDetails } = req.body;
   const query = 'INSERT INTO products SET ?';
@@ -75,6 +70,7 @@ router.post('/products', authenticateToken, authorizeRole(['staff', 'admin']), (
   });
 });
 
+// Обновление продукта (доступно для staff и admin)
 router.put('/products/:id', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
   const { id } = req.params;
   const updatedProduct = req.body; // Получаем обновленные данные
@@ -88,6 +84,7 @@ router.put('/products/:id', authenticateToken, authorizeRole(['staff', 'admin'])
   });
 });
 
+// Удаление продукта (доступно для staff и admin)
 router.delete('/products/:id', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
   const { id } = req.params;
   const query = 'DELETE FROM products WHERE id = ?';
@@ -112,6 +109,28 @@ router.post('/orders', (req, res) => {
     pickup_time: req.body.pickup_time || null,
     table_number: req.body.table_number || null
   };
+
+  // Обработка pickup_time
+  if (orderDetails.pickup_time) {
+    let pickupDateTime;
+    if (orderDetails.pickup_time.includes('T')) {
+      // Если pickup_time это ISO-строка с датой и временем
+      pickupDateTime = new Date(orderDetails.pickup_time);
+    } else {
+      // Если pickup_time это только время (например, '22:56'), добавляем текущую дату
+      const now = new Date();
+      const [hours, minutes] = orderDetails.pickup_time.split(':');
+      pickupDateTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), parseInt(hours), parseInt(minutes));
+    }
+
+    if (isNaN(pickupDateTime.getTime())) {
+      return res.status(400).json({ error: 'Invalid pickup_time format' });
+    }
+
+    orderDetails.pickup_time = formatDateTime(pickupDateTime.toISOString());
+  } else {
+    orderDetails.pickup_time = null;
+  }
 
   // Сначала создаем запись о заказе
   const orderQuery = 'INSERT INTO orders SET ?';
@@ -159,8 +178,6 @@ router.post('/orders', (req, res) => {
   });
 });
 
-
-
 // Маршрут для получения списка заказов (только для ролей admin и staff)
 router.get('/orders', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
   const query = 'SELECT * FROM orders';
@@ -178,7 +195,7 @@ router.put('/orders/:id', authenticateToken, authorizeRole(['staff', 'admin']), 
   const { id } = req.params;
   const updatedOrder = {
     ...req.body,
-    order_time: formatDateTime(req.body.order_time),
+    order_time: req.body.order_time ? formatDateTime(req.body.order_time) : undefined,
     pickup_time: req.body.pickup_time ? formatDateTime(req.body.pickup_time) : null
   };
 
@@ -217,16 +234,23 @@ router.get('/customers', authenticateToken, authorizeRole(['staff', 'admin']), (
   }); 
 });
 
+// Маршрут для обновления клиента (PUT /customers/:id)
 router.put('/customers/:id', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
   const { id } = req.params;
-  const updatedCustomer = req.body;
+  const updatedCustomer = {
+    name: req.body.name,
+    phone: req.body.phone,
+    orders_ids: req.body.orders_ids,
+    notes: req.body.notes,
+    account_creation_date: req.body.account_creation_date ? formatDateTime(req.body.account_creation_date) : undefined
+  };
 
-  // Преобразование даты в формат 'YYYY-MM-DD HH:MM:SS'
-  if (updatedCustomer.account_creation_date) {
-    const date = new Date(updatedCustomer.account_creation_date);
-    const formattedDate = date.toISOString().slice(0, 19).replace('T', ' '); // Конвертируем в формат MySQL
-    updatedCustomer.account_creation_date = formattedDate;
-  }
+  // Удаляем undefined поля
+  Object.keys(updatedCustomer).forEach(key => {
+    if (updatedCustomer[key] === undefined) {
+      delete updatedCustomer[key];
+    }
+  });
 
   const query = 'UPDATE customers SET ? WHERE id = ?';
   dbCustomers.query(query, [updatedCustomer, id], (err, results) => {
@@ -234,13 +258,13 @@ router.put('/customers/:id', authenticateToken, authorizeRole(['staff', 'admin']
       console.error('Error updating customer:', err);
       return res.status(500).json({ error: 'Error updating customer' });
     }
-    res.json({ message: 'Customer updated' });
+    res.json({ message: 'Customer updated successfully' });
   });
 });
 
-
+// Маршрут для удаления клиента (DELETE /customers/:id)
 router.delete('/customers/:id', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
-  const { id } = req.params; // Идентификатор клиента
+  const { id } = req.params;
 
   const query = 'DELETE FROM customers WHERE id = ?';
   dbCustomers.query(query, id, (err, results) => {
@@ -256,6 +280,5 @@ router.delete('/customers/:id', authenticateToken, authorizeRole(['staff', 'admi
     res.json({ message: 'Customer deleted successfully' });
   });
 });
-
 
 module.exports = router;
