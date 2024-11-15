@@ -217,4 +217,45 @@ router.get('/customers', authenticateToken, authorizeRole(['staff', 'admin']), (
   }); 
 });
 
+router.put('/customers/:id', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
+  const { id } = req.params;
+  const updatedCustomer = req.body;
+
+  // Преобразование даты в формат 'YYYY-MM-DD HH:MM:SS'
+  if (updatedCustomer.account_creation_date) {
+    const date = new Date(updatedCustomer.account_creation_date);
+    const formattedDate = date.toISOString().slice(0, 19).replace('T', ' '); // Конвертируем в формат MySQL
+    updatedCustomer.account_creation_date = formattedDate;
+  }
+
+  const query = 'UPDATE customers SET ? WHERE id = ?';
+  dbCustomers.query(query, [updatedCustomer, id], (err, results) => {
+    if (err) {
+      console.error('Error updating customer:', err);
+      return res.status(500).json({ error: 'Error updating customer' });
+    }
+    res.json({ message: 'Customer updated' });
+  });
+});
+
+
+router.delete('/customers/:id', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
+  const { id } = req.params; // Идентификатор клиента
+
+  const query = 'DELETE FROM customers WHERE id = ?';
+  dbCustomers.query(query, id, (err, results) => {
+    if (err) {
+      console.error('Error deleting customer:', err);
+      return res.status(500).json({ error: 'Error deleting customer' });
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: 'Customer not found' });
+    }
+
+    res.json({ message: 'Customer deleted successfully' });
+  });
+});
+
+
 module.exports = router;
