@@ -8,6 +8,8 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const { authenticateToken, authorizeRole } = require('../middleware/auth');
+const uploadDir = path.join(__dirname, '../../uploads');
+console.log(`Upload directory path: ${uploadDir}`); // Проверяем, корректно ли формируется путь
 
 // Настройка хранилища для загрузки файлов
 const storage = multer.diskStorage({
@@ -28,6 +30,8 @@ const upload = multer({ storage });
 
 // Добавление изображения
 router.post('/images', authenticateToken, authorizeRole(['staff', 'admin']), upload.single('image'), (req, res) => {
+  const uploadDir = path.join(__dirname, '../../uploads');
+  console.log(uploadDir); // Проверяем, какой путь используется для сохранения
   if (!req.file) {
     return res.status(400).json({ error: 'Image file is required' });
   }

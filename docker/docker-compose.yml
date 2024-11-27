@@ -25,6 +25,7 @@ services:
       - MYSQL_CUSTOMERS_DATABASE=customers_db
     volumes:
       - ../api/src:/usr/src/app/api/src  # Добавляем volume для синхронизации кода
+      - ./uploads:/usr/src/app/uploads # чтобы директория uploads сохранялась и была доступна на хостовой машине
     depends_on:
       - mysql_orders
       - mysql_products
