@@ -11,6 +11,9 @@ const { authenticateToken, authorizeRole } = require('../middleware/auth');
 const uploadDir = path.join(__dirname, '../../uploads');
 console.log(`Upload directory path: ${uploadDir}`); // Проверяем, корректно ли формируется путь
 
+// Экспонирование статической директории для изображений
+router.use('/static/images', express.static(path.join(__dirname, '../../uploads')));
+
 // Настройка хранилища для загрузки файлов
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -20,13 +23,17 @@ const storage = multer.diskStorage({
     }
     cb(null, uploadDir);
   },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, `${uniqueSuffix}-${file.originalname}`);
+  // filename: (req, file, cb) => {
+  //   const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+  //   cb(null, `${uniqueSuffix}-${file.originalname}`);
+  // }  вариант с добавлением префикса для уникальности имён файлов картинок
+  filename: function (req, file, cb) {
+    cb(null, file.originalname); // Сохраняется только оригинальное имя
   }
 });
 
 const upload = multer({ storage });
+
 
 // Добавление изображения
 router.post('/images', authenticateToken, authorizeRole(['staff', 'admin']), upload.single('image'), (req, res) => {
