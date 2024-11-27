@@ -7,6 +7,7 @@ const mysql = require('mysql2');
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const { authenticateToken, authorizeRole } = require('../middleware/auth');
 
 // Настройка хранилища для загрузки файлов
 const storage = multer.diskStorage({
@@ -118,7 +119,6 @@ const dbAdmins = mysql.createConnection({
   database: process.env.MYSQL_ADMINS_DATABASE
 });
 
-const { authenticateToken, authorizeRole } = require('../middleware/auth');
 
 // Функция для форматирования datetime
 const formatDateTime = (isoString) => {
@@ -315,7 +315,7 @@ router.get('/customers', authenticateToken, authorizeRole(['staff', 'admin']), (
       return res.status(500).json({ error: 'Error fetching customers' });
     }
     res.json(results);
-  }); 
+  });
 });
 
 // Маршрут для обновления клиента (PUT /customers/:id)
