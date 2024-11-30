@@ -12,7 +12,7 @@ const uploadDir = path.join(__dirname, '../../uploads');
 console.log(`Upload directory path: ${uploadDir}`); // Проверяем, корректно ли формируется путь
 
 // Экспонирование статической директории для изображений
-router.use('/static/images', express.static(path.join(__dirname, '../../uploads')));
+router.use('/static', express.static(path.join(__dirname, '../../uploads')));
 
 // Настройка хранилища для загрузки файлов
 const storage = multer.diskStorage({
@@ -34,6 +34,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+// логирование всех запросов
+router.use((req, res, next) => {
+  console.log(`${req.method} ${req.originalUrl}`);
+  next();
+});  
 
 // Добавление изображения
 router.post('/images', authenticateToken, authorizeRole(['staff', 'admin']), upload.single('image'), (req, res) => {
@@ -93,12 +98,15 @@ router.get('/images/:filename', (req, res) => {
   const { filename } = req.params;
   const filePath = path.join(__dirname, '../../uploads', filename);
 
+  console.log(`File requested: ${filePath}`); // Логируем путь
+
   if (!fs.existsSync(filePath)) {
     return res.status(404).json({ error: 'Image not found' });
   }
 
   res.sendFile(filePath);
 });
+
 
 
 // Настройка соединений с базами данных
