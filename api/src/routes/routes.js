@@ -384,4 +384,46 @@ router.delete('/customers/:id', authenticateToken, authorizeRole(['staff', 'admi
   });
 });
 
+// Добавление нескольких продуктов (доступно для staff и admin)
+router.post('/products/bulk', authenticateToken, authorizeRole(['staff', 'admin']), (req, res) => {
+  const products = req.body.products;
+
+  if (!Array.isArray(products) || products.length === 0) {
+    return res.status(400).json({ error: 'Products array is required and cannot be empty' });
+  }
+
+  // Преобразуем массив объектов в массив массивов для SQL-запроса
+  const values = products.map(product => [
+    product.category,           // Поле 'category' обязательно
+    product.name,               // Поле 'name' обязательно
+    product.price,              // Поле 'price' обязательно
+    product.description || null, // Поле 'description' может быть null
+    product.imagePath || null,  // Поле 'imagePath' может быть null
+    product.weight || null,     // Поле 'weight' может быть null
+    product.calories || null,   // Поле 'calories' может быть null
+    product.fats || null,       // Поле 'fats' может быть null
+    product.proteins || null,   // Поле 'proteins' может быть null
+    product.carbohydrates || null // Поле 'carbohydrates' может быть null
+  ]);
+
+  // Формируем запрос для множественного добавления
+  const query = `
+    INSERT INTO products (category, name, price, description, imagePath, weight, calories, fats, proteins, carbohydrates)
+    VALUES ?
+  `;
+
+  dbProducts.query(query, [values], (err, results) => {
+    if (err) {
+      console.error('Error adding multiple products:', err);
+      return res.status(500).json({ error: 'Error adding products' });
+    }
+
+    res.json({
+      message: `${results.affectedRows} products added successfully`,
+      productIds: Array.from({ length: results.affectedRows }, (_, i) => results.insertId + i),
+    });
+  });
+});
+
+
 module.exports = router;
