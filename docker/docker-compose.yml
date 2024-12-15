@@ -36,7 +36,7 @@ services:
     entrypoint: [ "/bin/sh", "-c", "sleep 30 && node index.js" ]
 
   # Сервис для site1
-  nginx_site1:
+  nginx_site1_clients:
     build:
       context: .. # Корневой контекст для Nginx
       dockerfile: ./docker/Dockerfile.site1 # Используется Dockerfile для site1
@@ -46,11 +46,11 @@ services:
       - api
     volumes:
       - ./nginx.site1.conf:/etc/nginx/nginx.conf:ro # Конфигурация для site1
-      - ../site1/dist:/usr/share/nginx/html:ro # Статические файлы для site1
+      - ./site1/dist:/usr/share/nginx/html:ro # Статические файлы для site1
     restart: always
 
   # Сервис для site2
-  nginx_site2:
+  nginx_site2_staff:
     build:
       context: .. # Корневой контекст для Nginx
       dockerfile: ./docker/Dockerfile.site2 # Используется Dockerfile для site2
@@ -60,7 +60,7 @@ services:
       - api
     volumes:
       - ./nginx.site2.conf:/etc/nginx/nginx.conf:ro # Конфигурация для site2
-      - ../site2/dist:/usr/share/nginx/html:ro # Статические файлы для site2
+      - ./site2/dist:/usr/share/nginx/html:ro # Статические файлы для site2
     restart: always
 
   mysql_orders:
