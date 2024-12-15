@@ -3,9 +3,9 @@
 FROM nginx:alpine
 
 # Копируем конфигурацию для site2
-COPY ./docker/nginx.site2.conf /etc/nginx/nginx.conf
+COPY ./nginx.site2.conf /etc/nginx/nginx.conf
 
 # Копируем статические файлы для site2
-COPY ./docker/site2/dist /usr/share/nginx/html
+COPY ./site2/dist /usr/share/nginx/html
 
 EXPOSE 80
