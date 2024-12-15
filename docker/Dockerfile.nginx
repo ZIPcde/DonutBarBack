@@ -1,3 +1,5 @@
+# docker\Dockerfile.nginx
+
 # Используем официальный образ Nginx
 FROM nginx:alpine
 

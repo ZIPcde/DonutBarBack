@@ -1,0 +1,11 @@
+# Dockerfile.site2
+
+FROM nginx:alpine
+
+# Копируем конфигурацию для site2
+COPY ./docker/site2/nginx.conf /etc/nginx/nginx.conf
+
+# Копируем статические файлы для site2
+COPY ./docker/site2/dist /usr/share/nginx/html
+
+EXPOSE 80

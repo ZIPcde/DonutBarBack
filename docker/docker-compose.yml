@@ -1,7 +1,9 @@
+# docker\docker-compose.yml
+
 services:
   api:
     build:
-      context: ..  # Убедитесь, что контекст указывает на правильный путь
+      context: ..  # Корневой контекст для API
       dockerfile: ./docker/Dockerfile.api
     ports:
       - "3000:3000"
@@ -24,25 +26,42 @@ services:
       - MYSQL_CUSTOMERS_PASSWORD=spore23
       - MYSQL_CUSTOMERS_DATABASE=customers_db
     volumes:
-      - ../api/src:/usr/src/app/api/src  # Добавляем volume для синхронизации кода
-      - ./uploads:/usr/src/app/uploads # чтобы директория uploads сохранялась и была доступна на хостовой машине
+      - ../api/src:/usr/src/app/api/src
+      - ./uploads:/usr/src/app/uploads
     depends_on:
       - mysql_orders
       - mysql_products
       - mysql_customers
-      - mysql_admins  # Добавляем зависимость от новой базы данных
-    entrypoint: ["/bin/sh", "-c", "sleep 30 && node index.js"]  # Добавляем задержку перед запуском
+      - mysql_admins
+    entrypoint: ["/bin/sh", "-c", "sleep 30 && node index.js"]
 
-  nginx:
+  # Сервис для site1
+  nginx_site1:
     build:
-      context: ..  # Убедитесь, что контекст указывает на правильный путь
-      dockerfile: ./docker/Dockerfile.nginx
+      context: ..  # Корневой контекст для Nginx
+      dockerfile: ./docker/Dockerfile.site1  # Используется Dockerfile для site1
     ports:
-      - "8080:80"
+      - "8080:80"  # Первый сайт на порту 8080
     depends_on:
       - api
     volumes:
-      - ../nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/nginx.site1.conf:/etc/nginx/nginx.conf:ro  # Конфигурация для site1
+      - ../site1/dist:/usr/share/nginx/html:ro  # Статические файлы для site1
+    restart: always
+
+  # Сервис для site2
+  nginx_site2:
+    build:
+      context: ..  # Корневой контекст для Nginx
+      dockerfile: ./docker/Dockerfile.site2  # Используется Dockerfile для site2
+    ports:
+      - "8081:80"  # Второй сайт на порту 8081
+    depends_on:
+      - api
+    volumes:
+      - ./docker/nginx.site2.conf:/etc/nginx/nginx.conf:ro  # Конфигурация для site2
+      - ../site2/dist:/usr/share/nginx/html:ro  # Статические файлы для site2
+    restart: always
 
   mysql_orders:
     image: mysql:8.0
@@ -56,7 +75,7 @@ services:
       - "3307:3306"
     volumes:
       - mysql-orders-data:/var/lib/mysql
-      - ./init-orders-db.sql:/docker-entrypoint-initdb.d/init-orders-db.sql  # SQL скрипт для orders_db
+      - ./init-orders-db.sql:/docker-entrypoint-initdb.d/init-orders-db.sql
 
   mysql_products:
     image: mysql:8.0
@@ -84,26 +103,26 @@ services:
       - "3308:3306"
     volumes:
       - mysql-customers-data:/var/lib/mysql
-      - ./init-customers-db.sql:/docker-entrypoint-initdb.d/init-customers-db.sql  # SQL скрипт для customers_db
+      - ./init-customers-db.sql:/docker-entrypoint-initdb.d/init-customers-db.sql
 
-  mysql_admins:  # Новая база данных для учетных записей администраторов
+  mysql_admins:
     build:
-      context: ..  # Указываем контекст текущей папки, где находится Dockerfile.mysql и init-admins-db.sql
-      dockerfile: ./docker/Dockerfile.mysql  # Используем кастомный Dockerfile для MySQL
+      context: ..  # Контекст для сборки
+      dockerfile: ./docker/Dockerfile.mysql
     container_name: mysql_admins
     environment:
       MYSQL_ROOT_PASSWORD: spore23
-      MYSQL_DATABASE: admins_db  # Название базы данных
+      MYSQL_DATABASE: admins_db
       MYSQL_USER: user
       MYSQL_PASSWORD: spore23
     ports:
-      - "3309:3306"  # Используем другой порт, чтобы избежать конфликта
+      - "3309:3306"
     volumes:
-      - mysql-admins-data:/var/lib/mysql  # Добавляем volume для хранения данных
-      - ./init-admins-db.sql:/docker-entrypoint-initdb.d/init-admins-db.sql  # SQL скрипт для admins_db
+      - mysql-admins-data:/var/lib/mysql
+      - ./init-admins-db.sql:/docker-entrypoint-initdb.d/init-admins-db.sql
 
 volumes:
   mysql-orders-data:
   mysql-products-data:
   mysql-customers-data:
-  mysql-admins-data:  # Volume для базы данных администраторов
+  mysql-admins-data:
