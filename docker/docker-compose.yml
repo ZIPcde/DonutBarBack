@@ -3,7 +3,7 @@
 services:
   api:
     build:
-      context: ..  # Корневой контекст для API
+      context: .. # Корневой контекст для API
       dockerfile: ./docker/Dockerfile.api
     ports:
       - "3000:3000"
@@ -33,34 +33,34 @@ services:
       - mysql_products
       - mysql_customers
       - mysql_admins
-    entrypoint: ["/bin/sh", "-c", "sleep 30 && node index.js"]
+    entrypoint: [ "/bin/sh", "-c", "sleep 30 && node index.js" ]
 
   # Сервис для site1
   nginx_site1:
     build:
-      context: ..  # Корневой контекст для Nginx
-      dockerfile: ./docker/Dockerfile.site1  # Используется Dockerfile для site1
+      context: .. # Корневой контекст для Nginx
+      dockerfile: ./docker/Dockerfile.site1 # Используется Dockerfile для site1
     ports:
-      - "8080:80"  # Первый сайт на порту 8080
+      - "8080:80" # Первый сайт на порту 8080
     depends_on:
       - api
     volumes:
-      - ./docker/nginx.site1.conf:/etc/nginx/nginx.conf:ro  # Конфигурация для site1
-      - ../site1/dist:/usr/share/nginx/html:ro  # Статические файлы для site1
+      - ./nginx.site1.conf:/etc/nginx/nginx.conf:ro # Конфигурация для site1
+      - ../site1/dist:/usr/share/nginx/html:ro # Статические файлы для site1
     restart: always
 
   # Сервис для site2
   nginx_site2:
     build:
-      context: ..  # Корневой контекст для Nginx
-      dockerfile: ./docker/Dockerfile.site2  # Используется Dockerfile для site2
+      context: .. # Корневой контекст для Nginx
+      dockerfile: ./docker/Dockerfile.site2 # Используется Dockerfile для site2
     ports:
-      - "8081:80"  # Второй сайт на порту 8081
+      - "8081:80" # Второй сайт на порту 8081
     depends_on:
       - api
     volumes:
-      - ./docker/nginx.site2.conf:/etc/nginx/nginx.conf:ro  # Конфигурация для site2
-      - ../site2/dist:/usr/share/nginx/html:ro  # Статические файлы для site2
+      - ./nginx.site2.conf:/etc/nginx/nginx.conf:ro # Конфигурация для site2
+      - ../site2/dist:/usr/share/nginx/html:ro # Статические файлы для site2
     restart: always
 
   mysql_orders:
@@ -107,7 +107,7 @@ services:
 
   mysql_admins:
     build:
-      context: ..  # Контекст для сборки
+      context: .. # Контекст для сборки
       dockerfile: ./docker/Dockerfile.mysql
     container_name: mysql_admins
     environment:
