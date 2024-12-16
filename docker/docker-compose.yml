@@ -39,7 +39,7 @@ services:
   nginx_site1_clients:
     build:
       context: .. # Корневой контекст для Nginx
-      dockerfile: ./Dockerfile.site1 # Используется Dockerfile для site1
+      dockerfile: ./docker/Dockerfile.site1 # Используется Dockerfile для site1
     ports:
       - "8080:80" # Первый сайт на порту 8080
     depends_on:
@@ -53,7 +53,7 @@ services:
   nginx_site2_staff:
     build:
       context: .. # Корневой контекст для Nginx
-      dockerfile: ./Dockerfile.site2 # Используется Dockerfile для site2
+      dockerfile: ./docker/Dockerfile.site2 # Используется Dockerfile для site2
     ports:
       - "8081:80" # Второй сайт на порту 8081
     depends_on:
