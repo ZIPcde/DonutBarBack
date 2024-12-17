@@ -7,6 +7,8 @@ services:
       dockerfile: ./docker/Dockerfile.api
     ports:
       - "3000:3000"
+    networks:
+      - my_network
     environment:
       - NODE_ENV=development
       - MYSQL_ADMINS_HOST=mysql_admins
@@ -42,6 +44,8 @@ services:
       dockerfile: ./docker/Dockerfile.site1 # Используется Dockerfile для site1
     ports:
       - "8080:80" # Первый сайт на порту 8080
+    networks:
+      - my_network
     depends_on:
       - api
     volumes:
@@ -56,12 +60,18 @@ services:
       dockerfile: ./docker/Dockerfile.site2 # Используется Dockerfile для site2
     ports:
       - "8081:80" # Второй сайт на порту 8081
+    networks:
+      - my_network
     depends_on:
       - api
     volumes:
       - ./nginx.site2.conf:/etc/nginx/nginx.conf:ro # Конфигурация для site2
       - ./site2/dist:/usr/share/nginx/html:ro # Статические файлы для site2
     restart: always
+
+  networks:
+  my_network:
+    driver: bridge
 
   mysql_orders:
     image: mysql:8.0
