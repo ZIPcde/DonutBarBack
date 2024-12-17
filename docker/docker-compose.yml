@@ -69,10 +69,6 @@ services:
       - ./site2/dist:/usr/share/nginx/html:ro # Статические файлы для site2
     restart: always
 
-  networks:
-  my_network:
-    driver: bridge
-
   mysql_orders:
     image: mysql:8.0
     container_name: mysql_orders
@@ -130,6 +126,10 @@ services:
     volumes:
       - mysql-admins-data:/var/lib/mysql
       - ./init-admins-db.sql:/docker-entrypoint-initdb.d/init-admins-db.sql
+
+networks:
+  my_network:
+    driver: bridge
 
 volumes:
   mysql-orders-data:
