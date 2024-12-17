@@ -79,6 +79,8 @@ services:
       MYSQL_PASSWORD: spore23
     ports:
       - "3307:3306"
+    networks:
+      - my_network
     volumes:
       - mysql-orders-data:/var/lib/mysql
       - ./init-orders-db.sql:/docker-entrypoint-initdb.d/init-orders-db.sql
@@ -93,6 +95,8 @@ services:
       MYSQL_PASSWORD: spore23
     ports:
       - "3305:3306"
+    networks:
+      - my_network
     volumes:
       - mysql-products-data:/var/lib/mysql
       - ./init-products-db.sql:/docker-entrypoint-initdb.d/init-products-db.sql
@@ -107,6 +111,8 @@ services:
       MYSQL_PASSWORD: spore23
     ports:
       - "3308:3306"
+    networks:
+      - my_network
     volumes:
       - mysql-customers-data:/var/lib/mysql
       - ./init-customers-db.sql:/docker-entrypoint-initdb.d/init-customers-db.sql
@@ -123,6 +129,8 @@ services:
       MYSQL_PASSWORD: spore23
     ports:
       - "3309:3306"
+    networks:
+      - my_network
     volumes:
       - mysql-admins-data:/var/lib/mysql
       - ./init-admins-db.sql:/docker-entrypoint-initdb.d/init-admins-db.sql
